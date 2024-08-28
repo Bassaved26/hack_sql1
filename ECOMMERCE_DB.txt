@@ -1,0 +1,143 @@
+#------------------------------------------------------ ECOMMERCE DATABASE-------------------------------------------#
+
+CREATE table discounts(
+  id_discounts SERIAL PRIMARY KEY NOT NULL,
+  status char NOT NULL,
+  percentage integer
+);
+
+CREATE table offers(
+  id_offer SERIAL PRIMARY KEY NOT NULL,
+  status char NOT NULL
+);
+
+CREATE table taxes(
+  id_tax SERIAL PRIMARY KEY NOT NULL,
+  percentage integer
+);
+
+CREATE table roles(
+  id_role SERIAL PRIMARY KEY NOT NULL,
+  name varchar(50) NOT NULL
+);
+
+CREATE table countries(
+  id_country SERIAL PRIMARY KEY NOT NULL,
+  name varchar(50) not NULL
+);
+
+CREATE table invoice_status(
+  id_invoice_status SERIAL PRIMARY KEY NOT NULL,
+  status integer
+);
+
+CREATE table orders(
+  id_order SERIAL PRIMARY KEY NOT NULL,
+  id_invoice integer,
+  id_product integer,
+  detail varchar(100),
+  amount integer, 
+  price integer NOT NULL,
+  percentage integer NOT NULL,
+  FOREIGN key (id_invoice) REFERENCES invoices(id_invoice),
+  FOREIGN KEY (id_product) REFERENCES products(id_product)
+);
+
+CREATE table invoices(
+  id_invoice SERIAL PRIMARY KEY NOT NULL,
+  id_customer integer,
+  id_payment integer,
+  id_invoice_status varchar(100),
+  fecha date, 
+  total_to_pay integer NOT NULL,
+  FOREIGN KEY (id_customer) REFERENCES customers(id_customer),
+  FOREIGN KEY (id_payment) REFERENCES pauments(id_payment),
+  FOREIGN KEY (id_invoice_status) REFERENCES invoices(id_invoice_status)
+);
+
+CREATE table products_customers(
+  id_product SERIAL PRIMARY KEY NOT NULL,
+  id_customer integer,
+  FOREIGN key (id_product) REFERENCES products(id_product),
+  FOREIGN KEY (id_customer) REFERENCES customers(id_customer)
+);
+
+CREATE table payments(
+  id_payment SERIAL PRIMARY KEY NOT NULL,
+  type char(50)
+);
+
+CREATE TABLE customers(
+   email varchar(100) PRIMARY KEY,
+   id_country INTEGER,
+   id_role integer,
+   name char(50),
+   age integer,
+   password varchar(30),
+   physical_address varchar(100),
+   FOREIGN KEY (id_country) REFERENCES countries(id_country),
+   FOREIGN KEY (id_role) REFERENCES roles(id_role)
+);
+
+CREATE TABLE products(
+  id_products SERIAL PRIMARY KEY NOT NULL,
+  id_discounts integer,
+  id_offer integer,
+  id_tax integer,
+  name varchar (100), 
+  details varchar(100),
+  minimum_stock integer not NULL,
+  maximum_stock integer not NULL,
+  current_stock integer not NULL,
+  price integer not NULL,
+  price_with_tax char(10),
+  foreign key (id_offer) references offers(id_offer), 
+  foreign key (id_discounts) references discounts(id_discounts),
+  foreign key (id_tax) references taxes(id_tax) 
+);
+
+insert into countries (id_country, name) values (1,'argentina'), (2,'colombia'),(3,'chile');
+select * from countries;
+
+insert into customers (email, id_country, id_role) values ('foo@foo.com',1,1),('barziman@baa.com',2,2),( 'qux@qux.com',3,3);
+select * from customers;
+update customers set name = 'barziman' where id_country = 2;
+
+insert into taxes (id_tax, percentage) values (1, 20), (2,10),(3,5);
+select * from taxes;
+
+insert into roles (id_role, name) values (1, 'jeans'), (2,'chemise'),(3,'intimate clothing');
+SELECT * FROM roles;
+  
+insert into payments (id_payment, type) values (1,'tranfer'), (2,'movil pay'),(3,'zelle');
+SELECT * FROM payments;
+  
+Insert into invoice_status (id_invoice_status, status) values (1,'paid'), (2,'no paid'),(3,'partial');
+SELECT * FROM invoice_status;
+
+Insert into invoices (id_invoice, id_customer, id_payment, id_invoice_status, fecha, total_to_pay) values (1,1,1,1,'2024/08/27',30), (2,2,2,2,'2024/08/27',90),(3,3,3,3,'2024/08/27',50);
+SELECT * FROM invoices;
+
+insert into discounts (id_discounts, status,percentage) values (1,'paid',10), (2,'no paid',40),(3,'partial',50);
+SELECT * FROM discounts;
+  
+INSERT into offers(id_offer,status) VALUES (1,'discount'),(2,'no discount'),(3,'no discount'); 
+SELECT * FROM offers;
+
+Insert into orders (id_order, id_invoice, id_product, detail, amount, price, percentage) values (1,1,1,'compra de jeans estivaneli',3,20,10), (2,2,2,'sin compra',0,0,0),(3,3,3,'compra chemise',2,15,15);
+SELECT * FROM orders;
+
+Insert into products (id_products, id_discounts, id_offer, id_tax, name, details, minimum_stock, maximum_stock, current_stock, price, price_with_tax) values (1,1,1,1,'jeans','jeans',3,20,10,20,23), (2,2,2,2,'camises','camises',0,0,0,10,14),(3,3,3,3,'chemise','chemise',2,15,15,15,16);
+SELECT * FROM products;
+ 
+DELETE from customers where name = 'qux';
+
+update customers set email = 'foo@foo.foo', name = 'fooz' where id_country = 1;
+update customers set email = 'barzi@man.zi', name = 'barzi' where id_country = 2;
+update customers set email = 'forzi@qux.man', name = 'forz' where id_country = 3;
+
+update taxes set percentage = 30 where id_tax = 1;
+update taxes set percentage = 25 where id_tax = 2;
+update taxes set percentage = 10 where id_tax = 3;
+
+

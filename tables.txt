@@ -1,0 +1,62 @@
+#------------------------------ CREACION DE TABLAS USER Y COUNTRIES ----------------------------------# 
+ create table countries(
+ id_country serial primary key,
+ name varchar(50) not null  
+);
+
+create table users(
+ id_users integer primary key NOT NULL,
+ id_country integer not null,
+ email varchar(100) not null,
+ name varchar (50) not null,
+ foreign key (id_country) references countries (id_country)   
+);
+  
+insert into countries (id_country, name) values (1,'argentina'), (2,'colombia'),(3,'chile');
+select * from countries;
+
+insert into users (id_users, id_country, email, name) 
+  values (2, 2, 'foo@foo.com', 'fooziman'), (3, 3, 'bar@bar.com', 'barziman'); 
+select * from users;
+ 
+delete from users where email = 'bar@bar.com';
+ 
+update users set id_users = 1 where id_users = 2;
+update users set email = 'foo@foo.foo', name = 'fooz' where id_users = 2;
+ 
+select * from users u inner join  countries c on u.id_country = c.id_country;
+select u.id_users as id, u.email, u.name as fullname, c.name 
+from users u inner join  countries c on u.id_country = c.id_country;
+  
+#------------------------------------- CREACION DE TABLAS PRIORITIES Y CONTACT REQUEST ------------------------------------------------------#
+  
+CREATE table priorities(
+  id_priorities integer PRIMARY key NOT NULL,
+  type_name varchar(100) not null
+);
+
+CREATE table contact_request(
+  id_email integer PRIMARY KEY NOT NULL,
+  id_country integer NOT NULL,
+  id_priority integer NOT NULL,
+  name varchar(50) not NULL,
+  detail char(100),
+  physical_address varchar(100),
+  foreign key (id_country) references countries (id_country)
+  Foreign key (id_priority) references priorities (id_priorities));
+
+-- comando para agregar tabla "physical_address" con el comando ALTER TABLE
+-- ALTER TABLE contact_request ADD COLUMN physical_address varchar(100);
+
+insert into countries (id_country, name) values (4,'uruguay'), (5,'venezuela');
+insert into priorities (id_priorities, type_name) values (1,'aguda'), (2,'grave'), (3,'esdrujula');
+insert into contact_request (id_email, id_country, id_priority, name, detail, physical_address) values (1,4,4,'fooziman','venta de inmmuebles','Houston Texas'), (2,5,5,'barziman','compra de maquina lava autos','Carabobo Valencia'), (3,6,6,'qux','compra de carro','Russia moscow');
+
+select * from contact_request r inner join  countries c on r.id_country = c.id_country;
+
+delete from contact_request where id_email = 2;
+update contact_request set id_email = 2 where id_email = 3;
+update contact_request set name = 'foo' WHERE id_email = 1; 
+
+SELECT * FROM priorities;
+SELECT * FROM contact_request;
